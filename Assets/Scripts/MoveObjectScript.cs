@@ -1,18 +1,63 @@
-using System.Collections;
-using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class MoveObjectScript : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField]
+    private Transform objectTransform;
+
+    [SerializeField]
+    private LineRenderer line;
+
+    [SerializeField]
+    private UnityEvent loopends;
+
+    [SerializeField]
+    private UnityEvent endOfTheLine;
+
+    private PathData data;
+
+    //
+    private void Awake()
     {
-        Debug.Log(DownloadFileScript.GetTrajectoryData().Time);
+        data = DownloadFileScript.GetTrajectoryData();
+        StartMovement();
     }
 
-    // Update is called once per frame
-    void Update()
+    /// <summary>
+    /// Defines movement trajectory for the object based on a loaded data
+    /// </summary>
+    public void StartMovement()
     {
-        
+        var startPoint = data.Trajectory[0];
+        startPoint.y += objectTransform.position.y;
+
+        //Setting the starting position of the ball to the first point of trajectory
+        objectTransform.position = startPoint;
+
+        if(data.Loop)
+        {
+            data.Trajectory.Add(startPoint);
+        }
+
+        //DrawScript.DrawLine(data.Trajectory, line);
+        var sequence = PathGeneratorScript.GenerateSequence(data.Trajectory, objectTransform, data.Time);
+
+        if (data.Loop)
+        {
+            sequence.OnComplete(() => {
+                loopends?.Invoke();
+                sequence.Restart();
+            });
+        }
+        else
+        {
+            sequence.OnComplete(() => {
+                endOfTheLine?.Invoke();
+            });
+        }
+
+        DOTween.Play(sequence);
     }
 }
