@@ -34,11 +34,10 @@ public static class PathGeneratorScript
     {
         Sequence sequence = DOTween.Sequence();       
         CalculateDistances(trajectory, out List<float> distances, out float sumDistance);
+
         for (int i = 0; i < trajectory.Count; i++)
         {
-            var newPosition = trajectory[i];
-            newPosition.y += transform.localPosition.y;
-            sequence.Append(transform.DOMove(newPosition, time * distances[i] / sumDistance).SetSpeedBased().SetEase(Ease.Linear));
+            sequence.Append(transform.DOMove(trajectory[i], time * distances[i] / sumDistance).SetSpeedBased().SetEase(Ease.Linear));
         }
 
         return sequence;
@@ -61,7 +60,7 @@ public static class PathGeneratorScript
         }
 
         //Removing the first point from the trajectory here, because
-        //the ball is already there, but we needed that point to calculate the distance of the first movement
+        //the object is already there, but we needed that point to calculate the distance of the first movement
         trajectory.RemoveAt(0);
     }
 }

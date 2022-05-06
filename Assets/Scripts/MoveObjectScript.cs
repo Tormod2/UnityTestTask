@@ -10,28 +10,31 @@ public class MoveObjectScript : MonoBehaviour
     [SerializeField]
     private LineRenderer line;
 
-    [SerializeField]
-    private UnityEvent loopends;
+    public UnityEvent OnLoopFinished;
 
-    [SerializeField]
-    private UnityEvent endOfTheLine;
+    public UnityEvent OnMovementEnd;
 
     private PathData data;
+    private bool needsReset = false;
 
-    //
-    private void Awake()
+    public PathData Data
     {
-        data = DownloadFileScript.GetTrajectoryData();
-        StartMovement();
+        get => data;
+        set => data = value;
     }
+
 
     /// <summary>
     /// Defines movement trajectory for the object based on a loaded data
     /// </summary>
     public void StartMovement()
     {
+        if (needsReset)
+        {
+            Data = DownloadFileScript.GetTrajectoryData();
+            DOTween.Clear();
+        }
         var startPoint = data.Trajectory[0];
-        startPoint.y += objectTransform.position.y;
 
         //Setting the starting position of the ball to the first point of trajectory
         objectTransform.position = startPoint;
@@ -47,17 +50,18 @@ public class MoveObjectScript : MonoBehaviour
         if (data.Loop)
         {
             sequence.OnComplete(() => {
-                loopends?.Invoke();
+                OnLoopFinished?.Invoke();
                 sequence.Restart();
             });
         }
         else
         {
             sequence.OnComplete(() => {
-                endOfTheLine?.Invoke();
+                OnMovementEnd?.Invoke();
             });
         }
 
         DOTween.Play(sequence);
+        needsReset = true;
     }
 }
