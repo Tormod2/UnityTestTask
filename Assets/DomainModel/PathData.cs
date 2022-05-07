@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Class that describes the path data
+/// Class that defines the path data
 /// </summary>
 public class PathData 
 {
