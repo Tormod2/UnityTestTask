@@ -16,6 +16,7 @@ public class MoveObjectScript : MonoBehaviour
 
     private PathData data;
     private bool needsReset = false;
+    private Sequence currentSequence;
 
     public PathData Data
     {
@@ -25,43 +26,44 @@ public class MoveObjectScript : MonoBehaviour
 
 
     /// <summary>
-    /// Defines movement trajectory for the object based on a loaded data
+    /// 
     /// </summary>
     public void StartMovement()
     {
         if (needsReset)
         {
             Data = DownloadFileScript.GetTrajectoryData();
-            DOTween.Clear();
+            currentSequence.Kill();
         }
-        var startPoint = data.Trajectory[0];
 
-        //Setting the starting position of the ball to the first point of trajectory
+        var startPoint = Data.Trajectory[0];
+
+        //Setting the starting position of the object to the first point of trajectory
         objectTransform.position = startPoint;
 
-        if(data.Loop)
+        if(Data.Loop)
         {
-            data.Trajectory.Add(startPoint);
+            Data.Trajectory.Add(startPoint);
         }
 
-        //DrawScript.DrawLine(data.Trajectory, line);
-        var sequence = PathGeneratorScript.GenerateSequence(data.Trajectory, objectTransform, data.Time);
+        DrawLineScript.DrawLine(Data.Trajectory, line);
+        currentSequence = PathGeneratorScript.GenerateSequence(Data.Trajectory, objectTransform, Data.Time);
 
-        if (data.Loop)
+        if (Data.Loop)
         {
-            sequence.OnComplete(() => {
+            currentSequence.OnComplete(() => {
                 OnLoopFinished?.Invoke();
-                sequence.Restart();
+                currentSequence.Restart();
             });
         }
         else
         {
-            sequence.OnComplete(() => {
+            currentSequence.OnComplete(() => {
                 OnMovementEnd?.Invoke();
             });
         }
 
-        DOTween.Play(sequence);
+        DOTween.Play(currentSequence);
         needsReset = true;
     }
 }
