@@ -1,26 +1,120 @@
+using System;
 using DG.Tweening;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
+
+public class Segment
+{
+    public Vector2 First { get; set; }
+    public Vector2 Second { get; set; }
+}
 
 public static class PathGeneratorScript
 {
-    /// <summary>
-    /// Generates a random set of given number of points on a given ranges of X and Z, while Y remains a given constant. 
-    /// </summary>
-    /// <returns></returns>
-    public static List<Vector3> GenerateRandomPath(float xStart, float xEnd,float yValue, float zStart, float zEnd, int dotAmount )
+    public static ICollection<Vector2> GeneratePoints(int number)
     {
-        var path = new List<Vector3>();
-        
-        for (int i = 0; i < dotAmount; i++)
+        var segments = new List<Segment>()
         {
-            path.Add(new Vector3(Random.Range(xStart, xEnd), yValue, Random.Range(zStart, zEnd)));
+            new Segment()
+            {
+                First = new Vector2(Random.Range(-100, 100), Random.Range(-100, 100)),
+                Second = new Vector2(Random.Range(-100, 100), Random.Range(-100, 100))
+            }
+        };
+
+        var numberOfGeneratedDots = 2;
+        while (numberOfGeneratedDots < number)
+        {
+            var nextDotX = Random.Range(-100, 100);
+            var nextDotY = Random.Range(-100, 100);
+
+            var newSegment = new Segment()
+            {
+                First = segments.Last().Second,
+                Second = new Vector2(nextDotX, nextDotY)
+            };
+
+            bool hasCurrentSegmentIntersection = false;
+
+            foreach (var segment in segments)
+            {
+                if (segment == segments.Last())
+                {
+                    break;
+                }
+
+                if (HaveSegmentsIntersection(segment, newSegment))
+                {
+                    hasCurrentSegmentIntersection = true;
+                    break;
+                }
+            }
+
+            if (hasCurrentSegmentIntersection)
+            {
+                continue;
+            }
+
+            segments.Add(newSegment);
+            numberOfGeneratedDots++;
         }
 
-        IEnumerable<Vector3> sorted = path.OrderBy(v => v.x).ThenBy(v => v.z);
+        var segmentsDots = new List<Vector2>()
+        {
+            segments.First().First,
+            segments.First().Second
+        };
 
-        return sorted.ToList();
+        segmentsDots.AddRange(segments.Skip(1).Select(segment => segment.Second));
+        return segmentsDots;
+    }
+
+    private static bool HaveSegmentsIntersection(Segment firstSegment, Segment secondSegment)
+    {
+        var (coefficient1, offset1) = GetLineEquation(firstSegment);
+        var (coefficient2, offset2) = GetLineEquation(secondSegment);
+
+        var intersectionX = (offset2 - offset1) / (coefficient1 - coefficient2);
+        var intersectionY = coefficient1 * intersectionX + offset1;
+
+        var intersectionPoint = new Vector2(intersectionX, intersectionY);
+
+        return IsPointInBoundingArea(intersectionPoint, firstSegment)
+               && IsPointInBoundingArea(intersectionPoint, secondSegment);
+    }
+
+    private static (float Coefficient, float Offset) GetLineEquation(Segment segment)
+    {
+        var x1 = segment.First.x;
+        var y1 = segment.First.y;
+
+        var x2 = segment.Second.x;
+        var y2 = segment.Second.y;
+
+        var divider = x2 - x1 == 0 ? 0.00001f : x2 - x1;
+
+        var coefficient = (y2 - y1) / divider;
+        var offset = -x1 * (y2 - y1) / divider + y1;
+
+        return (coefficient, offset);
+    }
+
+    private static bool IsPointInBoundingArea(Vector2 point, Segment segment)
+    {
+        const float precision = 0.00001f;
+
+        var leftCornerX = Math.Min(segment.First.x, segment.Second.x);
+        var bottomCornerY = Math.Min(segment.First.y, segment.Second.y);
+
+        var rightCornerX = Math.Max(segment.First.x, segment.Second.x);
+        var topCornerY = Math.Max(segment.First.y, segment.Second.y);
+
+        return (point.x > leftCornerX || Math.Abs(point.x - leftCornerX) < precision)
+               && (point.x < rightCornerX || Math.Abs(point.x - rightCornerX) < precision)
+               && (point.y > bottomCornerY || Math.Abs(point.y - bottomCornerY) < precision)
+               && (point.y < topCornerY || Math.Abs(point.y - topCornerY) < precision);
     }
 
     /// <summary>
@@ -30,9 +124,9 @@ public static class PathGeneratorScript
     /// <param name="transform"></param>
     /// <param name="time"></param>
     /// <returns></returns>
-    public static Sequence GenerateSequence(List<Vector3> trajectory, Transform transform, float time) 
+    public static Sequence GenerateSequence(List<Vector3> trajectory, Transform transform, float time)
     {
-        Sequence sequence = DOTween.Sequence();       
+        Sequence sequence = DOTween.Sequence();
         CalculateDistances(trajectory, out List<float> distances, out float sumDistance);
 
         for (int i = 0; i < trajectory.Count; i++)

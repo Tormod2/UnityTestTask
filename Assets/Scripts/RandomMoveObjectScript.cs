@@ -1,5 +1,5 @@
 using DG.Tweening;
-using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class RandomMoveObjectScript : MonoBehaviour
@@ -11,26 +11,21 @@ public class RandomMoveObjectScript : MonoBehaviour
     private LineRenderer originalLine;
 
     [SerializeField]
-    private LineRenderer bezierLine;
-
-    [SerializeField]
-    private float time = 15f;
+    private float time = 30f;
 
     /// <summary>
     /// Defines movement trajectory for the object based on a randomly generated trajectory and a given time
     /// </summary>
     public void StartRandomMovement()
     {
-        var trajectory = PathGeneratorScript.GenerateRandomPath(-100f, 100f, 2, -100f, 100f, 35);
-        var bezierTrajectory = BezierCurveScript.MakeBezierCurve(0.08f, trajectory);
-        
+        var dots = PathGeneratorScript.GeneratePoints(35);
+        var trajectory = dots.Select(dot => new Vector3(dot.x, 2f, dot.y)).ToList();
+
         DrawLineScript.DrawLine(trajectory, originalLine);
-        DrawLineScript.DrawLine(bezierTrajectory, bezierLine);
 
         //Setting the starting position of the ball to the first point of trajectory
-        objectTransform.position = bezierTrajectory[0];
-        
-        
-        DOTween.Play(PathGeneratorScript.GenerateSequence(bezierTrajectory, objectTransform, time));
+        objectTransform.position = trajectory[0];
+
+        DOTween.Play(PathGeneratorScript.GenerateSequence(trajectory, objectTransform, time));
     }
 }
