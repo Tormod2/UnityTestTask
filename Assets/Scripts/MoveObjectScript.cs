@@ -10,6 +10,9 @@ public class MoveObjectScript : MonoBehaviour
     [SerializeField]
     private LineRenderer line;
 
+    [SerializeField]
+    private LineRenderer bezierLine;
+
     public UnityEvent OnLoopFinished;
 
     public UnityEvent OnMovementEnd;
@@ -24,9 +27,8 @@ public class MoveObjectScript : MonoBehaviour
         set => data = value;
     }
 
-
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public void StartMovement()
     {
@@ -46,8 +48,12 @@ public class MoveObjectScript : MonoBehaviour
             Data.Trajectory.Add(startPoint);
         }
 
+        var bezierTrajectory = BezierCurveScript.MakeBezierCurve(0.08f, Data.Trajectory);
         DrawLineScript.DrawLine(Data.Trajectory, line);
-        currentSequence = PathGeneratorScript.GenerateSequence(Data.Trajectory, objectTransform, Data.Time);
+        DrawLineScript.DrawLine(bezierTrajectory, bezierLine);
+
+        currentSequence = PathGeneratorScript.GenerateSequence(bezierTrajectory, objectTransform, Data.Time);
+        //currentSequence = PathGeneratorScript.GenerateSequence(Data.Trajectory, objectTransform, Data.Time);
 
         if (Data.Loop)
         {

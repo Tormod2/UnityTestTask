@@ -960,6 +960,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectTransform: {fileID: 903021250}
   line: {fileID: 1226587696}
+  bezierLine: {fileID: 1929012659}
   OnLoopFinished:
     m_PersistentCalls:
       m_Calls: []
@@ -1014,7 +1015,6 @@ Transform:
   - {fileID: 409831035}
   - {fileID: 608219407}
   - {fileID: 2077392108}
-  - {fileID: 1929012658}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1457,6 +1457,7 @@ Transform:
   - {fileID: 903021250}
   - {fileID: 662267820}
   - {fileID: 1226587695}
+  - {fileID: 1929012658}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2091,11 +2092,11 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1929012657}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 953220555}
+  m_Father: {fileID: 1456620404}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!120 &1929012659
