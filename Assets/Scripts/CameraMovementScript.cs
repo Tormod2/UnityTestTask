@@ -4,7 +4,7 @@ public class CameraMovementScript : MonoBehaviour
 {
     [SerializeField]
     private Transform objectTransform;
-    
+
     [SerializeField]
     private Vector3 offset;
 
