@@ -132,6 +132,10 @@ public static class PathGeneratorScript
         for (int i = 0; i < trajectory.Count; i++)
         {
             sequence.Append(transform.DOMove(trajectory[i], time * distances[i] / sumDistance).SetSpeedBased().SetEase(Ease.Linear));
+            if (i < trajectory.Count - 1)
+            {
+                sequence.Append(transform.DOLookAt(trajectory[i+1], 0.001f));
+            }
         }
 
         return sequence;

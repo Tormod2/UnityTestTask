@@ -1,6 +1,7 @@
 using DG.Tweening;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class RandomMoveObjectScript : MonoBehaviour
 {
@@ -12,6 +13,10 @@ public class RandomMoveObjectScript : MonoBehaviour
 
     [SerializeField]
     private float time = 30f;
+
+    public UnityEvent OnMovementEnd;
+
+    private Sequence currentSequence;
 
     /// <summary>
     /// Defines movement trajectory for the object based on a randomly generated trajectory and a given time
@@ -26,6 +31,12 @@ public class RandomMoveObjectScript : MonoBehaviour
         //Setting the starting position of the ball to the first point of trajectory
         objectTransform.position = trajectory[0];
 
-        DOTween.Play(PathGeneratorScript.GenerateSequence(trajectory, objectTransform, time));
+        currentSequence = PathGeneratorScript.GenerateSequence(trajectory, objectTransform, time);
+
+        currentSequence.OnComplete(() => {
+            OnMovementEnd?.Invoke();
+        });
+
+        DOTween.Play(currentSequence);
     }
 }
