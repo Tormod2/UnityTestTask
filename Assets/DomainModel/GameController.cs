@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Connects UI elements and logic scripts.
+/// </summary>
 public class GameController : MonoBehaviour
 {
     [SerializeField]

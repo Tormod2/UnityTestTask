@@ -1,5 +1,4 @@
 using DG.Tweening;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -23,7 +22,7 @@ public class RandomMoveObjectScript : MonoBehaviour
     private bool needsReset;
 
     /// <summary>
-    /// Defines movement trajectory for the object based on a randomly generated trajectory and a given time
+    /// Defines movement trajectory for the object based on a randomly generated trajectory and a given time.
     /// </summary>
     public void StartRandomMovement()
     {
@@ -38,7 +37,7 @@ public class RandomMoveObjectScript : MonoBehaviour
         DrawLineScript.DrawLine(trajectory, originalLine);
         DrawLineScript.DrawLine(bezierTrajectory, bezierLine);
 
-        //Setting the starting position of the ball to the first point of trajectory
+        //Setting the starting position of the ball to the first point of trajectory.
         objectTransform.position = bezierTrajectory[0];
 
         currentSequence = PathGeneratorScript.GenerateSequence(bezierTrajectory, objectTransform, time);
