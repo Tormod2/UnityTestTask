@@ -21,6 +21,9 @@ public class GameController : MonoBehaviour
     [SerializeField]
     private Animator randomMoveAnimator;
 
+    [SerializeField]
+    private TimerScript timer;
+
     private static readonly int startMoveTrigger = Animator.StringToHash("MovementStart");
     private static readonly int endMoveTrigger = Animator.StringToHash("MovementEnd");
 
@@ -28,11 +31,26 @@ public class GameController : MonoBehaviour
     private void Awake()
     {
         moveScript.Data = DownloadFileScript.GetTrajectoryData();
+
         beginMovementButton.onClick.AddListener(moveScript.StartMovement);
-        moveScript.OnMovementEnd.AddListener(() => moveAnimator.SetTrigger(endMoveTrigger));
         beginMovementButton.onClick.AddListener(() => moveAnimator.SetTrigger(startMoveTrigger));
+        beginMovementButton.onClick.AddListener(() =>
+        {
+            timer.CurrentLap.gameObject.SetActive(true);
+            timer.StartTimer();
+        });
+
+        moveScript.OnMovementEnd.AddListener(() => moveAnimator.SetTrigger(endMoveTrigger));
+        moveScript.OnLoopFinished.AddListener(() =>
+        {
+            timer.LastLap.gameObject.SetActive(true);
+            timer.Refresh();
+        });
+        moveScript.OnMovementEnd.AddListener(() => timer.StopTimer());
+
         beginRandomMovementButton.onClick.AddListener(randomMoveScript.StartRandomMovement);
         beginRandomMovementButton.onClick.AddListener(() => randomMoveAnimator.SetTrigger(startMoveTrigger));
+
         randomMoveScript.OnMovementEnd.AddListener(() => randomMoveAnimator.SetTrigger(endMoveTrigger));
     }
 }
