@@ -16,7 +16,6 @@ public static class BezierCurveScript
     public static List<Vector3> MakeBezierCurve(float step, List<Vector3> trajectory)
     {
         var newTrajectory = new List<Vector3>();
-
         var sharpPoints = new List<Vector3>();
 
         for (int j = 0; j < trajectory.Count - 2; j += 2)
@@ -52,7 +51,7 @@ public static class BezierCurveScript
         }
 
         //In this algorithm, if the amount of points is even,
-        //the last point should be added manually, because it's not fitting in. 
+        //the last point should be added manually, because it's not fitting in.
         if (trajectory.Count % 2 == 0)
         {
             newTrajectory.Add(trajectory.Last());
@@ -104,8 +103,8 @@ public static class BezierCurveScript
     /// <returns></returns>
     public static float Polinom(int n, float t, int i)
     {
-        return (float)(Factorial(n) / (Factorial(i) * Factorial(n - i)) 
-            * Math.Pow(t, i) 
+        return (float)(Factorial(n) / (Factorial(i) * Factorial(n - i))
+            * Math.Pow(t, i)
             * Math.Pow(1 - t, n - i));
     }
 }
