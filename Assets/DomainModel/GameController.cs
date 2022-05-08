@@ -10,6 +10,9 @@ public class GameController : MonoBehaviour
     private Button beginRandomMovementButton;
 
     [SerializeField]
+    private Button exitApplicationButton;
+
+    [SerializeField]
     private MoveObjectScript moveScript;
 
     [SerializeField]
@@ -23,6 +26,9 @@ public class GameController : MonoBehaviour
 
     [SerializeField]
     private TimerScript timer;
+
+    [SerializeField]
+    private ApplicationCloseScript exitScript;
 
     private static readonly int startMoveTrigger = Animator.StringToHash("MovementStart");
     private static readonly int endMoveTrigger = Animator.StringToHash("MovementEnd");
@@ -46,11 +52,13 @@ public class GameController : MonoBehaviour
             timer.LastLap.gameObject.SetActive(true);
             timer.Refresh();
         });
-        moveScript.OnMovementEnd.AddListener(() => timer.StopTimer());
+        moveScript.OnMovementEnd.AddListener(timer.StopTimer);
 
         beginRandomMovementButton.onClick.AddListener(randomMoveScript.StartRandomMovement);
         beginRandomMovementButton.onClick.AddListener(() => randomMoveAnimator.SetTrigger(startMoveTrigger));
 
         randomMoveScript.OnMovementEnd.AddListener(() => randomMoveAnimator.SetTrigger(endMoveTrigger));
+
+        exitApplicationButton.onClick.AddListener(exitScript.Exit);
     }
 }
