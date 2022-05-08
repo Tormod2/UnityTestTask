@@ -19,37 +19,37 @@ public class TimerScript : MonoBehaviour
     [SerializeField]
     private TMP_Text lastLap;
 
-    private float _time;
-    private bool _isPressed;
+    private float time;
+    private bool isPressed;
 
     private void Update()
     {
-        if (_isPressed)
+        if (isPressed)
         {
-            _time += Time.deltaTime;
+            time += Time.deltaTime;
             currentLap.text = $"Текущее время: {GetSeconds()}";
         }
     }
 
-    //Resets timer to zero and returns the last lap time
+    //Resets timer to zero and returns the last lap time.
     public void Refresh()
     {
         lastLap.text = $"Прошлый круг: {GetSeconds()}";
-        _time = 0f;
+        time = 0f;
     }
 
     private int GetSeconds()
     {
-        return Mathf.FloorToInt(_time % 60);
+        return Mathf.FloorToInt(time % 60);
     }
 
     public void StopTimer()
     {
-        _isPressed = false;
+        isPressed = false;
     }
 
     public void StartTimer()
     {
-        _isPressed = true;
+        isPressed = true;
     }
 }

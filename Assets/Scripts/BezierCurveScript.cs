@@ -8,11 +8,8 @@ public static class BezierCurveScript
     /// <summary>
     /// Takes the list of points that needs to be smoothed with a given step.
     /// It divides the initial trajectory in groups of three,
-    /// where the last point of the privious group is the first point of the next one.
+    /// where the last point of the previous group is the first point of the next one.
     /// </summary>
-    /// <param name="step"></param>
-    /// <param name="trajectory"></param>
-    /// <returns></returns>
     public static List<Vector3> MakeBezierCurve(float step, List<Vector3> trajectory)
     {
         var newTrajectory = new List<Vector3>();
@@ -33,6 +30,7 @@ public static class BezierCurveScript
             newTrajectory.AddRange(bezierPoints);
         }
 
+        //Smooths the rest of the sharp angles.
         for (int i = 0; i < sharpPoints.Count-1; i++)
         {
             var points = new List<Vector3>();
@@ -85,9 +83,9 @@ public static class BezierCurveScript
     }
 
     /// <summary>
-    /// Calculates factorial for given number
+    /// Calculates factorial for given number.
     /// </summary>
-    /// <param name="n">Number</param>
+    /// <param name="n">Number.</param>
     /// <returns></returns>
     public static int Factorial(int n)
     {
@@ -95,11 +93,11 @@ public static class BezierCurveScript
     }
 
     /// <summary>
-    /// Calculates Bernstein polinom
+    /// Calculates Bernstein polinom.
     /// </summary>
-    /// <param name="n">Polinom power</param>
-    /// <param name="t">Step</param>
-    /// <param name="i">Point number</param>
+    /// <param name="n">Polinom power.</param>
+    /// <param name="t">Step.</param>
+    /// <param name="i">Point number.</param>
     /// <returns></returns>
     public static float Polinom(int n, float t, int i)
     {

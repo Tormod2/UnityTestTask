@@ -11,7 +11,6 @@ public class MoveObjectScript : MonoBehaviour
     private LineRenderer line;
 
     public UnityEvent OnLoopFinished;
-
     public UnityEvent OnMovementEnd;
 
     private PathData data;
@@ -25,7 +24,7 @@ public class MoveObjectScript : MonoBehaviour
     }
 
     /// <summary>
-    ///
+    ///Method that generates a path to follow.
     /// </summary>
     public void StartMovement()
     {
@@ -37,7 +36,7 @@ public class MoveObjectScript : MonoBehaviour
 
         var startPoint = Data.Trajectory[0];
 
-        //Setting the starting position of the object to the first point of trajectory
+        //Setting the starting position of the object to the first point of trajectory.
         objectTransform.position = startPoint;
 
         if(Data.Loop)
