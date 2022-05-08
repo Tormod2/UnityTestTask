@@ -1,120 +1,61 @@
 using System;
 using DG.Tweening;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class Segment
-{
-    public Vector2 First { get; set; }
-    public Vector2 Second { get; set; }
-}
-
 public static class PathGeneratorScript
 {
-    public static ICollection<Vector2> GeneratePoints(int number)
+    public static List<Vector3> GenerateRandomPoints(int number)
     {
-        var segments = new List<Segment>()
+        var path = new List<Vector3>();
+
+        for (int i = 0; i < number; i++)
         {
-            new Segment()
-            {
-                First = new Vector2(Random.Range(-100, 100), Random.Range(-100, 100)),
-                Second = new Vector2(Random.Range(-100, 100), Random.Range(-100, 100))
-            }
-        };
-
-        var numberOfGeneratedDots = 2;
-        while (numberOfGeneratedDots < number)
-        {
-            var nextDotX = Random.Range(-100, 100);
-            var nextDotY = Random.Range(-100, 100);
-
-            var newSegment = new Segment()
-            {
-                First = segments.Last().Second,
-                Second = new Vector2(nextDotX, nextDotY)
-            };
-
-            bool hasCurrentSegmentIntersection = false;
-
-            foreach (var segment in segments)
-            {
-                if (segment == segments.Last())
-                {
-                    break;
-                }
-
-                if (HaveSegmentsIntersection(segment, newSegment))
-                {
-                    hasCurrentSegmentIntersection = true;
-                    break;
-                }
-            }
-
-            if (hasCurrentSegmentIntersection)
-            {
-                continue;
-            }
-
-            segments.Add(newSegment);
-            numberOfGeneratedDots++;
+            path.Add(new Vector3(Random.Range(-100, 100), 2, Random.Range(-100, 100)));
         }
 
-        var segmentsDots = new List<Vector2>()
+        path = SortNonIntersecting(path);
+
+        return path;
+    }
+
+    private static Vector3 GetCentroid (List<Vector3> points)
+    {
+        Vector3 centroid = new Vector3();;
+
+        for (var i = 0; i < points.Count; i++)
         {
-            segments.First().First,
-            segments.First().Second
-        };
+            centroid.x += points[i].x;
+            centroid.z += points[i].z;
+        }
 
-        segmentsDots.AddRange(segments.Skip(1).Select(segment => segment.Second));
-        return segmentsDots;
+        centroid.x /= points.Count;
+        centroid.z /= points.Count;
+        return centroid;
     }
 
-    private static bool HaveSegmentsIntersection(Segment firstSegment, Segment secondSegment)
+    private static List<Vector3> SortNonIntersecting (List<Vector3> points)
     {
-        var (coefficient1, offset1) = GetLineEquation(firstSegment);
-        var (coefficient2, offset2) = GetLineEquation(secondSegment);
+        var center = GetCentroid(points);
+        points.Sort((vector3, vector4) =>
+        {
+            var angleA = Math.Atan2(vector3.z - center.z, vector3.x - center.x);
+            var angleB = Math.Atan2(vector4.z - center.z, vector4.x - center.x);
 
-        var intersectionX = (offset2 - offset1) / (coefficient1 - coefficient2);
-        var intersectionY = coefficient1 * intersectionX + offset1;
+            if (angleA - angleB < 0)
+            {
+                return -1;
+            }
+            if (angleA - angleB > 0)
+            {
+                return 1;
+            }
 
-        var intersectionPoint = new Vector2(intersectionX, intersectionY);
+            return 0;
+        });
 
-        return IsPointInBoundingArea(intersectionPoint, firstSegment)
-               && IsPointInBoundingArea(intersectionPoint, secondSegment);
-    }
-
-    private static (float Coefficient, float Offset) GetLineEquation(Segment segment)
-    {
-        var x1 = segment.First.x;
-        var y1 = segment.First.y;
-
-        var x2 = segment.Second.x;
-        var y2 = segment.Second.y;
-
-        var divider = x2 - x1 == 0 ? 0.00001f : x2 - x1;
-
-        var coefficient = (y2 - y1) / divider;
-        var offset = -x1 * (y2 - y1) / divider + y1;
-
-        return (coefficient, offset);
-    }
-
-    private static bool IsPointInBoundingArea(Vector2 point, Segment segment)
-    {
-        const float precision = 0.00001f;
-
-        var leftCornerX = Math.Min(segment.First.x, segment.Second.x);
-        var bottomCornerY = Math.Min(segment.First.y, segment.Second.y);
-
-        var rightCornerX = Math.Max(segment.First.x, segment.Second.x);
-        var topCornerY = Math.Max(segment.First.y, segment.Second.y);
-
-        return (point.x > leftCornerX || Math.Abs(point.x - leftCornerX) < precision)
-               && (point.x < rightCornerX || Math.Abs(point.x - rightCornerX) < precision)
-               && (point.y > bottomCornerY || Math.Abs(point.y - bottomCornerY) < precision)
-               && (point.y < topCornerY || Math.Abs(point.y - topCornerY) < precision);
+        return points;
     }
 
     /// <summary>
