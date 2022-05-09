@@ -51,5 +51,6 @@ public class TimerScript : MonoBehaviour
     public void StartTimer()
     {
         isPressed = true;
+        time = 0f;
     }
 }
