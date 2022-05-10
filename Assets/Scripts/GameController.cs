@@ -36,7 +36,6 @@ public class GameController : MonoBehaviour
     private static readonly int startMoveTrigger = Animator.StringToHash("MovementStart");
     private static readonly int endMoveTrigger = Animator.StringToHash("MovementEnd");
 
-
     private void Awake()
     {
         moveScript.Data = DownloadFileScript.GetTrajectoryData();
@@ -63,5 +62,15 @@ public class GameController : MonoBehaviour
         randomMoveScript.OnMovementEnd.AddListener(() => randomMoveAnimator.SetTrigger(endMoveTrigger));
 
         exitApplicationButton.onClick.AddListener(exitScript.Exit);
+    }
+
+    private void OnDestroy()
+    {
+        beginMovementButton.onClick.RemoveAllListeners();
+        beginRandomMovementButton.onClick.RemoveAllListeners();
+        moveScript.OnMovementEnd.RemoveAllListeners();
+        moveScript.OnLoopFinished.RemoveAllListeners();
+        randomMoveScript.OnMovementEnd.RemoveAllListeners();
+        exitApplicationButton.onClick.RemoveAllListeners();
     }
 }
