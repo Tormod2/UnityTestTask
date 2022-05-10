@@ -31,7 +31,7 @@ public static class BezierCurveScript
         }
 
         //Smooths the rest of the sharp angles.
-        for (int i = 0; i < sharpPoints.Count-1; i++)
+        for (int i = 0; i < sharpPoints.Count - 1; i++)
         {
             var points = new List<Vector3>();
             var bezierPoints = new List<Vector3>();
@@ -44,8 +44,8 @@ public static class BezierCurveScript
 
             GenerateBezierPoints(step, bezierPoints, points);
 
-            newTrajectory.RemoveRange(index-3,8);
-            newTrajectory.InsertRange(index-3, bezierPoints);
+            newTrajectory.RemoveRange(index - 3,8);
+            newTrajectory.InsertRange(index - 3, bezierPoints);
         }
 
         //In this algorithm, if the amount of points is even,

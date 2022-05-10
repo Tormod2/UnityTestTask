@@ -20,11 +20,11 @@ public class TimerScript : MonoBehaviour
     private TMP_Text lastLap;
 
     private float time;
-    private bool isPressed;
+    private bool timerStarted;
 
     private void Update()
     {
-        if (isPressed)
+        if (timerStarted)
         {
             time += Time.deltaTime;
             currentLap.text = $"Текущее время: {GetSeconds()}";
@@ -45,12 +45,12 @@ public class TimerScript : MonoBehaviour
 
     public void StopTimer()
     {
-        isPressed = false;
+        timerStarted = false;
     }
 
     public void StartTimer()
     {
-        isPressed = true;
+        timerStarted = true;
         time = 0f;
     }
 }
